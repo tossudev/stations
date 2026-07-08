@@ -16,7 +16,13 @@ func ParseInput(input string) ([]Station, []Connection, error) {
 	var connections []Connection
 	
 	for i, line := range strings.Split(input, "\n") {
-		if strings.HasPrefix(line, "#") {
+		var commentIndex int = strings.Index(line, "#")
+		if commentIndex != -1 {
+			line = line[:commentIndex]
+		}
+
+		line = strings.ReplaceAll(line, " ", "")
+		if len(line) == 0 {
 			continue
 		}
 
@@ -28,16 +34,6 @@ func ParseInput(input string) ([]Station, []Connection, error) {
 		if strings.HasPrefix(line, "connections:") {
 			parseStations = false
 			parseConnections = true
-			continue
-		}
-
-		var commentIndex int = strings.Index(line, "#")
-		if commentIndex != -1 {
-			line = line[:commentIndex]
-		}
-
-		line = strings.ReplaceAll(line, " ", "")
-		if len(line) == 0 {
 			continue
 		}
 
