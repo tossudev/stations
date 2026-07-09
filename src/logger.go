@@ -3,6 +3,12 @@ package main
 import (
 	"fmt"
 	"os"
+	"strings"
+)
+
+const (
+	PrefixError	string = `[ERROR] `
+	PrefixLog	string = `[LOG]   `
 )
 
 var (
@@ -23,18 +29,25 @@ var (
 	ErrTooManyStations			string = "Map has over 10 000 stations"
 )
 
-func main() {
-	PrintErrArgs(ErrDuplicateConnections, []string{"station1", "station2"})
-	PrintErr(ErrArgsCount)
+func PrintErr(messages ...string) {
+	message := strings.Join(messages, " ")
+	message = fmt.Sprintf("%s%s\n", PrefixError, message)
+	os.Stderr.Write([]byte(message))
 }
 
-func PrintErr(name string) {
-	err := "ERROR: " + name + "\n"
-	os.Stderr.Write([]byte(err))
+// Prints one of the defined messages with string format
+
+// Example:
+// PrintErrArgs(ErrDuplicateStation, "hakaniemi", "kalasatama")
+// Will print out:
+// [ERROR] Duplicate station names: [hakaniemi kalasatama]
+func PrintErrArgs(errMessage string, args ...string) {
+	message := fmt.Sprintf("%s%s\n", PrefixError, errMessage)
+	message = fmt.Sprintf(message, args)
+	os.Stderr.Write([]byte(message))
 }
 
-func PrintErrArgs(name string, args []string) {
-	err := "ERROR: " + fmt.Sprintf(name, args) + "\n"
-	os.Stderr.Write([]byte(err))
+func Log(messages ...string) {
+	message := strings.Join(messages, " ")
+	fmt.Println(fmt.Sprintf("%s%s", PrefixLog, message))
 }
-
