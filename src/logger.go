@@ -27,6 +27,8 @@ var (
 	ErrNoStations				string = "Map does not contain stations section"
 	ErrNoConnections			string = "Map does not contain connections section"
 	ErrTooManyStations			string = "Map has over 10 000 stations"
+	ErrMalformedStation			string = "Malformed station data: %s"
+	ErrMalformedConnection		string = "Malformed connection data: %s"
 )
 
 func PrintErr(messages ...string) {

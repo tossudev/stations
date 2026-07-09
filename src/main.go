@@ -23,13 +23,9 @@ func main() {
 	
 	Log("Using", input, "as input.")
 
-	var stations []Station
-	var connections []Connection
-	var parseErr error
-
-	stations, connections, parseErr = ParseInput(string(contents))
-	if parseErr != nil {
-		PrintErrArgs(err.Error())
+	stations, connections, ok := ParseMap(string(contents))
+	if !ok {
+		Log("Program exited with errors.")
 		return
 	}
 
