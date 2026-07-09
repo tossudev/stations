@@ -19,20 +19,27 @@ type GraphList struct {
 
 func NewGraphlist() *GraphList {
 	return &GraphList{
-		adjList: make(map[string][]string),
+		stations: make(map[string]*Station),
+		adjList:  make(map[string][]string),
 	}
 }
 
 // add stuff
-func (g *GraphList) AddStation(station string) {
-	if _, exists := g.adjList[station]; !exists {
-		g.adjList[station] = []string{}
+func (g *GraphList) AddStation(station *Station) {
+	if _, exists := g.stations[station.Name]; !exists {
+		g.stations[station.Name] = station
+		g.adjList[station.Name] = []string{}
 	}
 }
 
 func (g *GraphList) AddConnection(from, to string) {
-	g.AddStation(from)
-	g.AddStation(to)
+	if _, exists := g.stations[from]; !exists {
+		return // error
+	}
+	if _, exists := g.stations[to]; !exists {
+		return // error
+	}
+
 	g.adjList[from] = append(g.adjList[from], to)
 	g.adjList[to] = append(g.adjList[to], from)
 }
