@@ -1,5 +1,7 @@
 package main
 
+import "fmt"
+
 type Station struct {
 	Name string
 	X    int
@@ -13,33 +15,60 @@ type Station struct {
 //		End   string
 //	}
 type GraphList struct {
-	stations map[string]*Station
-	adjList  map[string][]string
+	stations      map[string]*Station
+	adjacentList  map[string][]string
+	coordinateMap map[string]string
 }
 
 func NewGraphlist() *GraphList {
 	return &GraphList{
-		stations: make(map[string]*Station),
-		adjList:  make(map[string][]string),
+		stations:      make(map[string]*Station),
+		adjacentList:  make(map[string][]string),
+		coordinateMap: make(map[string]string),
 	}
 }
 
-// add stuff
-func (g *GraphList) AddStation(station *Station) {
-	if _, exists := g.stations[station.Name]; !exists {
-		g.stations[station.Name] = station
-		g.adjList[station.Name] = []string{}
+func (g *GraphList) AddStation(station *Station) bool {
+	if _, exists := g.stations[station.Name]; exists {
+		Log(ErrDuplicateStation, station.Name)
+		PrintErrArgs(ErrDuplicateStation, station.Name)
+		return false
 	}
+	// check dublicate coordinates
+	coordKey := fmt.Sprintf("%d,%d", station.X, station.Y)
+	if existingName, exists := g.coordinateMap[coordKey]; exists {
+		Log(ErrDuplicateCoordinates, coordKey, "stations: ", existingName, station.Name)
+		PrintErrArgs(ErrDuplicateCoordinates, coordKey, "stations: ", existingName, station.Name)
+		return false
+	}
+	// all checks pass
+	g.stations[station.Name] = station
+	g.adjacentList[station.Name] = []string{}
+	g.coordinateMap[coordKey] = station.Name
+	return true
 }
 
-func (g *GraphList) AddConnection(from, to string) {
+// dont know if these errors ar correct?
+func (g *GraphList) AddConnection(from, to string) bool {
 	if _, exists := g.stations[from]; !exists {
-		return // error
+		Log(ErrStartStationNotExist, from)
+		PrintErrArgs(ErrStartStationNotExist, from)
+		return false
 	}
 	if _, exists := g.stations[to]; !exists {
-		return // error
+		Log(ErrEndStationNotExist, to)
+		PrintErrArgs(ErrEndStationNotExist, to)
+		return false
+	}
+	for _, neighbor := range g.adjacentList[from] {
+		if neighbor == to {
+			Log(ErrDuplicateConnections, from, to)
+			PrintErrArgs(ErrDuplicateConnections, to, from)
+			return false
+		}
 	}
 
-	g.adjList[from] = append(g.adjList[from], to)
-	g.adjList[to] = append(g.adjList[to], from)
+	g.adjacentList[from] = append(g.adjacentList[from], to)
+	g.adjacentList[to] = append(g.adjacentList[to], from)
+	return true
 }
