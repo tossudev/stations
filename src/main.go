@@ -2,40 +2,42 @@ package main
 
 
 import (
-	"os"
+	"fmt"
 )
 
 
 func main() {
-	if len(os.Args) != 3 {
-		PrintErr(ErrArgsCount)
-		return
-	}
-
-	input := os.Args[1]
-	output := os.Args[2]
-	
-	contents, err := os.ReadFile(input)
-	if err != nil {
-		PrintErr(err.Error())
-		return
-	}
-	
-	Log("Using", input, "as input.")
-
-	stations, connections, ok := ParseMap(string(contents))
+	mapfile, start, end, trainCount, ok := ParseArgs()
 	if !ok {
 		Log("Program exited with errors.")
 		return
 	}
 
-	dot := ToDot(stations, connections)
+	contents := ReadMapFile(mapfile)
 
-	err = os.WriteFile(output, []byte(dot), 0666)
-	if err != nil {
-		PrintErr(err.Error())
+	graphList, ok := ParseMap(string(contents))
+	if !ok {
+		Log("Program exited with errors.")
 		return
 	}
-	Log("Wrote output to", output)
-	Log("Program exited successfully.")
+
+	if _, exists := graphList.stations[start]; !exists {
+		PrintErr(ErrStartStationNotExist)
+		return
+	}
+	if _, exists := graphList.stations[end]; !exists {
+		PrintErr(ErrEndStationNotExist)
+		return
+	}
+
+	/*
+	for name, station := range graphList.stations {
+		fmt.Println(name, station)
+	}
+	for name2, station2 := range graphList.adjacentList {
+		fmt.Println(name2, station2)
+	}
+	*/
+	fmt.Println(mapfile, start, end, trainCount)
+	fmt.Println(graphList)
 }

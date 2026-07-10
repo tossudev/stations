@@ -12,6 +12,7 @@ const (
 )
 
 var (
+	Usage						string = "go run . [path to file containing network map] [start station] [end station] [number of trains]"
 	ErrArgsCount 				string = "Incorrect number of command line arguments"
 	ErrStartStationNotExist 	string = "Start station does not exist"
 	ErrEndStationNotExist		string = "End station does not exist"
@@ -22,13 +23,14 @@ var (
 	ErrInvalidCoordinates		string = "Coordinates are not valid positive integers"
 	ErrDuplicateCoordinates		string = "Two stations exist at the exact same coordinate location: %s"
 	ErrConnectionNotExist		string = "Connection does not exist: %s"
-	ErrDuplicateStation			string = "Duplicate station names: %s"
+	ErrDuplicateStations		string = "Duplicate station names: %s"
 	ErrInvalidStationNameArg	string = "Invalid station name in argument"
 	ErrNoStations				string = "Map does not contain stations section"
 	ErrNoConnections			string = "Map does not contain connections section"
 	ErrTooManyStations			string = "Map has over 10 000 stations"
 	ErrMalformedStation			string = "Malformed station data: %s"
 	ErrMalformedConnection		string = "Malformed connection data: %s"
+	ErrStationNotExist			string = "Station does not exist: %s"
 )
 
 func PrintErr(messages ...string) {

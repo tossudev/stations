@@ -8,12 +8,6 @@ type Station struct {
 	Y    int
 }
 
-// // TODO: Stations could be stored as actual Station struct instead of name string
-//
-//	type Connection struct {
-//		Begin string
-//		End   string
-//	}
 type GraphList struct {
 	stations      map[string]*Station
 	adjacentList  map[string][]string
@@ -30,14 +24,12 @@ func NewGraphlist() *GraphList {
 
 func (g *GraphList) AddStation(station *Station) bool {
 	if _, exists := g.stations[station.Name]; exists {
-		Log(ErrDuplicateStation, station.Name)
-		PrintErrArgs(ErrDuplicateStation, station.Name)
+		PrintErrArgs(ErrDuplicateStations, station.Name)
 		return false
 	}
 	// check dublicate coordinates
 	coordKey := fmt.Sprintf("%d,%d", station.X, station.Y)
 	if existingName, exists := g.coordinateMap[coordKey]; exists {
-		Log(ErrDuplicateCoordinates, coordKey, "stations: ", existingName, station.Name)
 		PrintErrArgs(ErrDuplicateCoordinates, coordKey, "stations: ", existingName, station.Name)
 		return false
 	}
@@ -51,18 +43,15 @@ func (g *GraphList) AddStation(station *Station) bool {
 // dont know if these errors ar correct?
 func (g *GraphList) AddConnection(from, to string) bool {
 	if _, exists := g.stations[from]; !exists {
-		Log(ErrStartStationNotExist, from)
-		PrintErrArgs(ErrStartStationNotExist, from)
+		PrintErrArgs(ErrStationNotExist, from)
 		return false
 	}
 	if _, exists := g.stations[to]; !exists {
-		Log(ErrEndStationNotExist, to)
-		PrintErrArgs(ErrEndStationNotExist, to)
+		PrintErrArgs(ErrStationNotExist, to)
 		return false
 	}
 	for _, neighbor := range g.adjacentList[from] {
 		if neighbor == to {
-			Log(ErrDuplicateConnections, from, to)
 			PrintErrArgs(ErrDuplicateConnections, to, from)
 			return false
 		}

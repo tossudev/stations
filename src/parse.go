@@ -11,22 +11,23 @@ const (
 	maxStations int = 10_000
 )
 
+var graphList *GraphList
 
-func ParseMap(input string) ([]Station, []Connection, bool) {
-	var stations []Station
-	var connections []Connection
+
+func ParseMap(input string) (*GraphList, bool) {
+	graphList = NewGraphlist()
 
 	var parseStations bool = false
 	var parseConnections bool = false
 	
 	if !strings.Contains(input, "stations:") {
 		PrintErr(ErrNoStations)
-		return []Station{}, []Connection{}, false
+		return graphList, false
 	}
 	
 	if !strings.Contains(input, "connections:") {
 		PrintErr(ErrNoConnections)
-		return []Station{}, []Connection{}, false
+		return graphList, false
 	}
 
 	for _, line := range strings.Split(input, "\n") {
@@ -54,25 +55,31 @@ func ParseMap(input string) ([]Station, []Connection, bool) {
 		if parseStations {
 			station, err := parseStation(line)
 			if err != nil {
-				return stations, connections, false
+				return graphList, false
 			}
-			stations = append(stations, station)
+			ok := graphList.AddStation(&station)
+			if !ok {
+				return graphList, false
+			}
 		}
 		if parseConnections {
-			connection, err := parseConnection(line)
+			begin, end, err := parseConnection(line)
 			if err != nil {
-				return stations, connections, false
+				return graphList, false
 			}
-			connections = append(connections, connection)
+			ok := graphList.AddConnection(begin, end)
+			if !ok {
+				return graphList, false
+			}
 		}
 	}
 
-	if len(stations) > maxStations {
+	if len(graphList.stations) > maxStations {
 		PrintErr(ErrTooManyStations)
-		return []Station{}, []Connection{}, false
+		return graphList, false
 	}
 
-	return stations, connections, true
+	return graphList, true
 }
 
 
@@ -103,15 +110,12 @@ func parseStation(input string) (Station, error) {
 }
 
 
-func parseConnection(input string) (Connection, error) {
+func parseConnection(input string) (string, string, error) {
 	var connectionValues []string = strings.Split(input, "-")
 	if len(connectionValues) != 2 {
 		PrintErr(ErrMalformedConnection, input)
-		return Connection{}, errors.New(fmt.Sprintf(ErrMalformedConnection, input))
+		return "", "", errors.New(fmt.Sprintf(ErrMalformedConnection, input))
 	}
 
-	return Connection{
-		Begin:	connectionValues[0],
-		End:	connectionValues[1],
-	}, nil
+	return connectionValues[0], connectionValues[1], nil
 }

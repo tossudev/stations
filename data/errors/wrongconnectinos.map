@@ -7,8 +7,9 @@ euston,11,23
 st_pancras,5,15
 
 connections:
-waterloo-victoria
-victoria-waterloo
+waterloo-jsdjfkjlsddfajkds # wrong connection
 waterloo-euston
 st_pancras-euston
 victoria-st_pancras
+
+
