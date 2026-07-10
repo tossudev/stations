@@ -1,0 +1,6 @@
+find all non-overlapping paths
+sort paths by distance
+
+
+shortest path + trains count = threshold
+
