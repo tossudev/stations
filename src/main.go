@@ -39,5 +39,6 @@ func main() {
 	}
 	*/
 	fmt.Println(mapfile, start, end, trainCount)
-	fmt.Println(graphList)
+	
+	fmt.Println(Bfs(graphList, start, end))
 }

@@ -1,4 +1,5 @@
-find all non-overlapping paths
+find bottlenecks? start with start and end connection counts
+find maximum number of(?) non-overlapping paths
 sort paths by distance
 
 
