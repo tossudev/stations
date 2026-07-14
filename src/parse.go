@@ -1,10 +1,10 @@
 package main
 
 import (
-	"strings"
 	"errors"
-	"strconv"
 	"fmt"
+	"strconv"
+	"strings"
 )
 
 const (
@@ -13,24 +13,23 @@ const (
 
 var graphList *GraphList
 
-
 func ParseMap(input string) (*GraphList, bool) {
 	graphList = NewGraphlist()
 
 	var parseStations bool = false
 	var parseConnections bool = false
-	
+
 	if !strings.Contains(input, "stations:") {
 		PrintErr(ErrNoStations)
 		return graphList, false
 	}
-	
+
 	if !strings.Contains(input, "connections:") {
 		PrintErr(ErrNoConnections)
 		return graphList, false
 	}
 
-	for _, line := range strings.Split(input, "\n") {
+	for line := range strings.SplitSeq(input, "\n") {
 		var commentIndex int = strings.Index(line, "#")
 		if commentIndex != -1 {
 			line = line[:commentIndex]
@@ -82,14 +81,13 @@ func ParseMap(input string) (*GraphList, bool) {
 	return graphList, true
 }
 
-
 func parseStation(input string) (Station, error) {
 	var stationValues []string = strings.Split(input, ",")
 	if len(stationValues) != 3 {
 		PrintErrArgs(ErrMalformedStation, input)
 		return Station{}, errors.New(fmt.Sprintf(ErrMalformedStation, input))
 	}
-	
+
 	name := stationValues[0]
 	x, err := strconv.Atoi(stationValues[1])
 	if err != nil || x < 0 {
@@ -103,12 +101,11 @@ func parseStation(input string) (Station, error) {
 	}
 
 	return Station{
-		Name:	name,
-		X:		x,
-		Y:		y,
+		Name: name,
+		X:    x,
+		Y:    y,
 	}, nil
 }
-
 
 func parseConnection(input string) (string, string, error) {
 	var connectionValues []string = strings.Split(input, "-")

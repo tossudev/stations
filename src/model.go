@@ -1,6 +1,9 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"slices"
+)
 
 type Station struct {
 	Name string
@@ -50,11 +53,9 @@ func (g *GraphList) AddConnection(from, to string) bool {
 		PrintErrArgs(ErrStationNotExist, to)
 		return false
 	}
-	for _, neighbor := range g.adjacentList[from] {
-		if neighbor == to {
-			PrintErrArgs(ErrDuplicateConnections, to, from)
-			return false
-		}
+	if slices.Contains(g.adjacentList[from], to) {
+		PrintErrArgs(ErrDuplicateConnections, to, from)
+		return false
 	}
 
 	g.adjacentList[from] = append(g.adjacentList[from], to)
