@@ -2,37 +2,22 @@ package main
 
 import (
 	"os"
-	"strconv"
 )
 
 
-func ParseArgs() (mapfile, start, end string, trainCount int, ok bool) {
+func ParseArgs() (mapfile, outputfile string, ok bool) {
 	ok = false
 
-	if len(os.Args) != 5 {
+	if len(os.Args) != 3 {
 		PrintErr(ErrArgsCount)
 		Log(Usage)
 		return
 	}
 
 	mapfile = os.Args[1]
-	start = os.Args[2]
-	end = os.Args[3]
-	trainCountStr := os.Args[4]
+	outputfile = os.Args[2]
 	
 	Log("Using", mapfile, "as input.")
-
-	var err error
-	trainCount, err = strconv.Atoi(trainCountStr)
-	if err != nil || trainCount < 1 {
-		PrintErr(ErrTrainsCount)
-		return
-	}
-
-	if start == end {
-		PrintErr(ErrStationsSame)
-		return
-	}
 
 	ok = true
 	return

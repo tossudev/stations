@@ -2,12 +2,12 @@ package main
 
 
 import (
-	"fmt"
+	"os"
 )
 
 
 func main() {
-	mapfile, start, end, trainCount, ok := ParseArgs()
+	mapfile, outputfile, ok := ParseArgs()
 	if !ok {
 		Log("Program exited with errors.")
 		return
@@ -15,29 +15,20 @@ func main() {
 
 	contents := ReadMapFile(mapfile)
 
-	graphList, ok := ParseMap(string(contents))
+	stations, connections, ok := ParseMap(string(contents))
 	if !ok {
 		Log("Program exited with errors.")
 		return
 	}
 
-	if _, exists := graphList.stations[start]; !exists {
-		PrintErr(ErrStartStationNotExist)
-		return
-	}
-	if _, exists := graphList.stations[end]; !exists {
-		PrintErr(ErrEndStationNotExist)
-		return
-	}
+	dot := ToDot(stations, connections)
 
-	/*
-	for name, station := range graphList.stations {
-		fmt.Println(name, station)
-	}
-	for name2, station2 := range graphList.adjacentList {
-		fmt.Println(name2, station2)
-	}
-	*/
-	fmt.Println(mapfile, start, end, trainCount)
-	fmt.Println(graphList)
+	var err error
+	err = os.WriteFile(outputfile, []byte(dot), 0666)
+	if err != nil {
+		PrintErrArgs("os.WriteFile:", err.Error())
+	} else {
+		Log("Wrote output to", outputfile)
+	}	
+
 }

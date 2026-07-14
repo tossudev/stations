@@ -4,30 +4,28 @@ import (
 	"strings"
 	"errors"
 	"strconv"
-	"fmt"
 )
 
 const (
 	maxStations int = 10_000
 )
 
-var graphList *GraphList
 
-
-func ParseMap(input string) (*GraphList, bool) {
-	graphList = NewGraphlist()
+func ParseMap(input string) ([]Station, []Connection, bool) {
+	var stations []Station
+	var connections []Connection
 
 	var parseStations bool = false
 	var parseConnections bool = false
 	
 	if !strings.Contains(input, "stations:") {
 		PrintErr(ErrNoStations)
-		return graphList, false
+		return stations, connections, false
 	}
 	
 	if !strings.Contains(input, "connections:") {
 		PrintErr(ErrNoConnections)
-		return graphList, false
+		return stations, connections, false
 	}
 
 	for _, line := range strings.Split(input, "\n") {
@@ -55,51 +53,39 @@ func ParseMap(input string) (*GraphList, bool) {
 		if parseStations {
 			station, err := parseStation(line)
 			if err != nil {
-				return graphList, false
+				return stations, connections, false
 			}
-			ok := graphList.AddStation(&station)
-			if !ok {
-				return graphList, false
-			}
+			stations = append(stations, station)
 		}
 		if parseConnections {
-			begin, end, err := parseConnection(line)
+			connection, err := parseConnection(line)
 			if err != nil {
-				return graphList, false
+				return stations, connections, false
 			}
-			ok := graphList.AddConnection(begin, end)
-			if !ok {
-				return graphList, false
-			}
+			connections = append(connections, connection)
 		}
 	}
 
-	if len(graphList.stations) > maxStations {
-		PrintErr(ErrTooManyStations)
-		return graphList, false
-	}
-
-	return graphList, true
+	return stations, connections, true
 }
-
 
 func parseStation(input string) (Station, error) {
 	var stationValues []string = strings.Split(input, ",")
 	if len(stationValues) != 3 {
 		PrintErrArgs(ErrMalformedStation, input)
-		return Station{}, errors.New(fmt.Sprintf(ErrMalformedStation, input))
+		return Station{}, errors.New("Input does not have 3 values for station!")
 	}
 	
 	name := stationValues[0]
 	x, err := strconv.Atoi(stationValues[1])
-	if err != nil || x < 0 {
+	if err != nil || x < 0{
 		PrintErr(ErrInvalidCoordinates)
-		return Station{}, errors.New(ErrInvalidCoordinates)
+		return Station{}, errors.New("Failed converting x to int!")
 	}
 	y, err := strconv.Atoi(stationValues[2])
-	if err != nil || y < 0 {
+	if err != nil || y < 0{
 		PrintErr(ErrInvalidCoordinates)
-		return Station{}, errors.New(ErrInvalidCoordinates)
+		return Station{}, errors.New("Failed converting y to int!")
 	}
 
 	return Station{
@@ -110,12 +96,15 @@ func parseStation(input string) (Station, error) {
 }
 
 
-func parseConnection(input string) (string, string, error) {
+func parseConnection(input string) (Connection, error) {
 	var connectionValues []string = strings.Split(input, "-")
 	if len(connectionValues) != 2 {
 		PrintErr(ErrMalformedConnection, input)
-		return "", "", errors.New(fmt.Sprintf(ErrMalformedConnection, input))
+		return Connection{}, errors.New("Input does not have 2 values for connection!")
 	}
 
-	return connectionValues[0], connectionValues[1], nil
+	return Connection{
+		Begin:	connectionValues[0],
+		End:	connectionValues[1],
+	}, nil
 }
