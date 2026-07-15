@@ -10,6 +10,25 @@ type Station struct {
 	X    int
 	Y    int
 }
+type Graph struct {
+	vertices int
+	capacity [][]int
+}
+
+func NewGraph(vertices int) *Graph {
+	capacity := make([][]int, vertices)
+	for i := range capacity {
+		capacity[i] = make([]int, vertices)
+	}
+	return &Graph{
+		vertices: vertices,
+		capacity: capacity,
+	}
+}
+
+func (g *Graph) AddEdge(u, v, cap int) {
+	g.capacity[u][v] = cap
+}
 
 type GraphList struct {
 	stations      map[string]*Station
