@@ -33,7 +33,7 @@ func MaxFlow(g *GraphList, source, sink int) (int, [][]int) {
 		path := []int{}
 		for v := sink; v != source; v = parent[v] {
 			path = append(path, v)
-			v = parent[v] // move to next node in path
+			// v = parent[v] // move to next node in path
 		}
 		path = append(path, source)
 		reverse(path)
