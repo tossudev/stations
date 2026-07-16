@@ -1,11 +1,9 @@
 package main
 
-
 import (
 	"fmt"
 	"slices"
 )
-
 
 func main() {
 	mapfile, start, end, trainCount, ok := ParseArgs()
@@ -42,7 +40,8 @@ func main() {
 	nfrom := slices.Index(graphList.stationsNames, start)
 	nto := slices.Index(graphList.stationsNames, end)
 
-	mf := MaxFlow(graphList, nfrom, nto)
+	mf, paths := MaxFlow(graphList, nfrom, nto)
 	fmt.Println("Max flow:", mf)
+	fmt.Println("Paths:", paths)
 
 }
