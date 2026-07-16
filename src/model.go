@@ -1,6 +1,9 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"slices"
+)
 
 type Station struct {
 	Name string
@@ -9,16 +12,22 @@ type Station struct {
 }
 
 type GraphList struct {
-	stations      map[string]*Station
-	adjacentList  map[string][]string
-	coordinateMap map[string]string
+	stations      	map[string]*Station
+	adjacentList  	map[string][]string
+	coordinateMap 	map[string]string
+	stationsNames	[]string
+	adjMatrix		[][]int
 }
+
+var firstConnection bool = true
+
 
 func NewGraphlist() *GraphList {
 	return &GraphList{
-		stations:      make(map[string]*Station),
-		adjacentList:  make(map[string][]string),
-		coordinateMap: make(map[string]string),
+		stations:		make(map[string]*Station),
+		adjacentList: 	make(map[string][]string),
+		coordinateMap:	make(map[string]string),
+		stationsNames:	[]string{},
 	}
 }
 
@@ -37,11 +46,22 @@ func (g *GraphList) AddStation(station *Station) bool {
 	g.stations[station.Name] = station
 	g.adjacentList[station.Name] = []string{}
 	g.coordinateMap[coordKey] = station.Name
+	g.stationsNames = append(g.stationsNames, station.Name)
+
 	return true
 }
 
 // dont know if these errors ar correct?
 func (g *GraphList) AddConnection(from, to string) bool {
+	if firstConnection {
+		firstConnection = false
+		g.adjMatrix = make([][]int, len(g.stations))
+		for i := range g.adjMatrix {
+			g.adjMatrix[i] = make([]int, len(g.stations))
+		}
+
+	}
+
 	if _, exists := g.stations[from]; !exists {
 		PrintErrArgs(ErrStationNotExist, from)
 		return false
@@ -59,5 +79,11 @@ func (g *GraphList) AddConnection(from, to string) bool {
 
 	g.adjacentList[from] = append(g.adjacentList[from], to)
 	g.adjacentList[to] = append(g.adjacentList[to], from)
+	nfrom := slices.Index(g.stationsNames, from)
+	nto := slices.Index(g.stationsNames, to)
+
+	g.adjMatrix[nfrom][nto] = 1
+	g.adjMatrix[nto][nfrom] = 1
+
 	return true
 }
