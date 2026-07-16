@@ -3,6 +3,7 @@ package main
 
 import (
 	"fmt"
+	"slices"
 )
 
 
@@ -30,15 +31,18 @@ func main() {
 		return
 	}
 
-	/*
 	for name, station := range graphList.stations {
 		fmt.Println(name, station)
 	}
 	for name2, station2 := range graphList.adjacentList {
 		fmt.Println(name2, station2)
 	}
-	*/
 	fmt.Println(mapfile, start, end, trainCount)
-	
-	fmt.Println(Bfs(graphList, start, end))
+	//fmt.Println(graphList.adjMatrix)
+	nfrom := slices.Index(graphList.stationsNames, start)
+	nto := slices.Index(graphList.stationsNames, end)
+
+	mf := MaxFlow(graphList, nfrom, nto)
+	fmt.Println("Max flow:", mf)
+
 }
