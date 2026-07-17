@@ -31,22 +31,21 @@ func (g *Graph) AddEdge(u, v, cap int) {
 }
 
 type GraphList struct {
-	stations      	map[string]*Station
-	adjacentList  	map[string][]string
-	coordinateMap 	map[string]string
-	stationsNames	[]string
-	adjMatrix		[][]int
+	stations      map[string]*Station
+	adjacentList  map[string][]string
+	coordinateMap map[string]string
+	stationsNames []string
+	adjMatrix     [][]int
 }
 
 var firstConnection bool = true
 
-
 func NewGraphlist() *GraphList {
 	return &GraphList{
-		stations:		make(map[string]*Station),
-		adjacentList: 	make(map[string][]string),
-		coordinateMap:	make(map[string]string),
-		stationsNames:	[]string{},
+		stations:      make(map[string]*Station),
+		adjacentList:  make(map[string][]string),
+		coordinateMap: make(map[string]string),
+		stationsNames: []string{},
 	}
 }
 
@@ -99,8 +98,13 @@ func (g *GraphList) AddConnection(from, to string) bool {
 	nfrom := slices.Index(g.stationsNames, from)
 	nto := slices.Index(g.stationsNames, to)
 
-	g.adjMatrix[nfrom][nto] = 1
-	g.adjMatrix[nto][nfrom] = 1
+	if nfrom < nto {
+		g.adjMatrix[nfrom][nto] = 1
+		// g.adjMatrix[nto][nfrom] = 1
+	} else {
+		g.adjMatrix[nto][nfrom] = 1
+		// g.adjMatrix[nfrom][nto] = 1
+	}
 
 	return true
 }
