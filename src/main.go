@@ -39,6 +39,25 @@ func main() {
 	}
 	*/
 	fmt.Println(mapfile, start, end, trainCount)
+<<<<<<< Updated upstream
 	
 	fmt.Println(Bfs(graphList, start, end))
+=======
+	//fmt.Println(graphList.adjMatrix)
+	nfrom := slices.Index(graphList.stationsNames, start)
+	nto := slices.Index(graphList.stationsNames, end)
+
+	mf, paths := MaxFlow(graphList, nfrom, nto)
+	fmt.Println("Max flow:", mf)
+
+	for _, path := range paths {
+		fmt.Println(path)
+		for _, station := range path {
+			fmt.Println(graphList.stationsNames[station])
+		}
+	}
+
+	//fmt.Println("Paths:", paths)
+
+>>>>>>> Stashed changes
 }
