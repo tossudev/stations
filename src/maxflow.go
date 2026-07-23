@@ -1,22 +1,27 @@
 package main
 
 import (
-	"fmt"
 	"math"
+	"fmt"
 )
 
 // MaxFlow calculates the maximum flow from source to sink using Edmonds-Karp
 func MaxFlow(g *GraphList, source, sink int) (int, [][]int) {
 	// Create residual graph - initially same as capacity
-	residual := make([][]int, len(g.stationsNames))
+	residual := make([][]int, len(g.stationsNames)*2)
 	for i := range residual {
-		residual[i] = make([]int, len(g.stationsNames))
+		residual[i] = make([]int, len(g.stationsNames)*2)
 		copy(residual[i], g.adjMatrix[i])
 	}
 
-	parent := make([]int, len(g.stationsNames))
+	for _, val := range residual {
+		fmt.Println(val)
+	}
+
+	parent := make([]int, len(g.stationsNames)*2)
 	maxFlow := 0
 	var paths [][]int
+	source += len(g.stationsNames)
 
 	// While there exists an augmenting path from source to sink
 	for g.bfs(source, sink, parent, residual) {
@@ -35,6 +40,8 @@ func MaxFlow(g *GraphList, source, sink int) (int, [][]int) {
 			path = append(path, v)
 			// v = parent[v] // move to next node in path
 		}
+
+
 		path = append(path, source)
 		reverse(path)
 		paths = append(paths, path)
@@ -46,12 +53,17 @@ func MaxFlow(g *GraphList, source, sink int) (int, [][]int) {
 			residual[v][u] += pathFlow // Increase backward edge
 		}
 		maxFlow += pathFlow
+
+		/*
 		fmt.Println("NEW")
 		fmt.Println(parent)
 		for child, value := range parent {
 			if value == 0 {
 				continue
 			}
+
+			child = child % len(g.stationsNames)
+			value = value % len(g.stationsNames)
 
 			if value == -1 {
 				fmt.Println("connection:", g.stationsNames[child+2], "->", g.stationsNames[0])
@@ -60,10 +72,58 @@ func MaxFlow(g *GraphList, source, sink int) (int, [][]int) {
 
 			fmt.Println("connection:", g.stationsNames[child], "->", g.stationsNames[value])
 		}
+		*/
 	}
 
-	return maxFlow, paths
+	newPaths := findPathsFromResidual(residual, g.adjMatrix, source, sink, len(g.stationsNames))
+
+	return maxFlow, newPaths
 }
+
+
+func findPathsFromResidual(residual [][]int, adjMatrix [][]int, source, sink, n int) [][]int {
+	var paths [][]int
+
+	for {
+		current := source
+		path := []int{source}
+		path_found := false
+
+		for current != sink {
+			next_node := -1
+			for v := range n*2 {
+				if current < n && v == current + n && residual[current][v] == 0 || current >= n && v < n && adjMatrix[current][v] == 1 && residual[current][v] == 0 {
+					next_node = v
+					break
+				}
+			}
+
+			if next_node == -1 {
+				break
+			}
+			
+			residual[current][next_node] = 1
+
+			current = next_node
+			if current < n {
+				path = append(path, current)
+			}
+			if current == sink {
+				path_found = true
+				break
+			}
+		}
+
+		if path_found {
+			paths = append(paths, path)
+		} else {
+			break
+		}
+	}
+
+	return paths
+}
+
 
 // helper to reverse path
 func reverse(path []int) {
@@ -76,7 +136,7 @@ func reverse(path []int) {
 // Returns true if a path exists, and fills the parent array with the path
 func (g *GraphList) bfs(source, sink int, parent []int, residual [][]int) bool {
 	// Initialize visited array
-	visited := make([]bool, len(g.stationsNames))
+	visited := make([]bool, len(g.stationsNames)*2)
 
 	// Create queue and add source
 	queue := []int{source}
@@ -89,7 +149,7 @@ func (g *GraphList) bfs(source, sink int, parent []int, residual [][]int) bool {
 		queue = queue[1:]
 
 		// Check all adjacent vertices
-		for v := 0; v < len(g.stationsNames); v++ {
+		for v := 0; v < len(g.stationsNames)*2; v++ {
 			// If not visited and has residual capacity
 			if !visited[v] && residual[u][v] > 0 {
 				queue = append(queue, v)

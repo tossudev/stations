@@ -73,9 +73,9 @@ func (g *GraphList) AddStation(station *Station) bool {
 func (g *GraphList) AddConnection(from, to string) bool {
 	if firstConnection {
 		firstConnection = false
-		g.adjMatrix = make([][]int, len(g.stations))
+		g.adjMatrix = make([][]int, len(g.stations)*2)
 		for i := range g.adjMatrix {
-			g.adjMatrix[i] = make([]int, len(g.stations))
+			g.adjMatrix[i] = make([]int, len(g.stations)*2)
 		}
 
 	}
@@ -97,14 +97,22 @@ func (g *GraphList) AddConnection(from, to string) bool {
 	g.adjacentList[to] = append(g.adjacentList[to], from)
 	nfrom := slices.Index(g.stationsNames, from)
 	nto := slices.Index(g.stationsNames, to)
+	N := len(g.stationsNames)
 
-	if nfrom < nto {
-		g.adjMatrix[nfrom][nto] = 1
-		// g.adjMatrix[nto][nfrom] = 1
-	} else {
-		g.adjMatrix[nto][nfrom] = 1
-		// g.adjMatrix[nfrom][nto] = 1
-	}
+	nfrom_in := nfrom
+	nfrom_out := nfrom + N
+
+	nto_in := nto
+	nto_out := nto + N
+
+	g.adjMatrix[nfrom_out][nto_in] = 1
+	g.adjMatrix[nto_out][nfrom_in] = 1
+
+	g.adjMatrix[nfrom_in][nfrom_out] = 1
+	g.adjMatrix[nfrom_out][nfrom_in] = 1
+
+	g.adjMatrix[nto_in][nto_out] = 1
+	g.adjMatrix[nto_out][nto_in] = 1
 
 	return true
 }
