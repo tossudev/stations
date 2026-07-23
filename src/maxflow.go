@@ -2,7 +2,6 @@ package main
 
 import (
 	"math"
-	"fmt"
 )
 
 // MaxFlow calculates the maximum flow from source to sink using Edmonds-Karp
@@ -14,9 +13,11 @@ func MaxFlow(g *GraphList, source, sink int) (int, [][]int) {
 		copy(residual[i], g.adjMatrix[i])
 	}
 
+	/*
 	for _, val := range residual {
 		fmt.Println(val)
 	}
+	*/
 
 	parent := make([]int, len(g.stationsNames)*2)
 	maxFlow := 0

@@ -44,11 +44,12 @@ func main() {
 	mf, paths := MaxFlow(graphList, nfrom, nto)
 	fmt.Println("Max flow:", mf)
 
-	for _, path := range paths {
-		fmt.Println(path)
+	for i, path := range paths {
+		fmt.Printf("Path #%d: ", i)
 		for _, station := range path {
-			fmt.Println(graphList.stationsNames[station])
+			fmt.Printf("%s ", graphList.stationsNames[station % len(graphList.stationsNames)])
 		}
+		fmt.Println()
 	}
 
 	//fmt.Println("Paths:", paths)
