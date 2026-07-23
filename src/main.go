@@ -1,10 +1,9 @@
 package main
 
-
 import (
 	"fmt"
+	"slices"
 )
-
 
 func main() {
 	mapfile, start, end, trainCount, ok := ParseArgs()
@@ -29,7 +28,6 @@ func main() {
 		PrintErr(ErrEndStationNotExist)
 		return
 	}
-
 	/*
 	for name, station := range graphList.stations {
 		fmt.Println(name, station)
@@ -39,10 +37,6 @@ func main() {
 	}
 	*/
 	fmt.Println(mapfile, start, end, trainCount)
-<<<<<<< Updated upstream
-	
-	fmt.Println(Bfs(graphList, start, end))
-=======
 	//fmt.Println(graphList.adjMatrix)
 	nfrom := slices.Index(graphList.stationsNames, start)
 	nto := slices.Index(graphList.stationsNames, end)
@@ -58,6 +52,4 @@ func main() {
 	}
 
 	//fmt.Println("Paths:", paths)
-
->>>>>>> Stashed changes
 }
