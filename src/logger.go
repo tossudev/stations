@@ -7,9 +7,10 @@ import (
 )
 
 const (
-	PrefixError	string = "\u001B[31m[ERROR] "
-	SuffixError string = "\033[0m"
-	PrefixLog	string = "[LOG]   "
+	PrefixError		string = "\u001B[31m[ERROR] "
+	PrefixWarning	string = "\u001B[33m[WARN]  "
+	SuffixReset 	string = "\033[0m"
+	PrefixLog		string = "[LOG]   "
 )
 
 var (
@@ -36,7 +37,7 @@ var (
 
 func PrintErr(messages ...string) {
 	message := strings.Join(messages, " ")
-	message = fmt.Sprintf("%s%s%s\n", PrefixError, message, SuffixError)
+	message = fmt.Sprintf("%s%s%s\n", PrefixError, message, SuffixReset)
 	os.Stderr.Write([]byte(message))
 }
 
@@ -47,7 +48,7 @@ func PrintErr(messages ...string) {
 // Will print out:
 // [ERROR] Duplicate station names: [hakaniemi kalasatama]
 func PrintErrArgs(errMessage string, args ...string) {
-	message := fmt.Sprintf("%s%s%s\n", PrefixError, errMessage, SuffixError)
+	message := fmt.Sprintf("%s%s%s\n", PrefixError, errMessage, SuffixReset)
 	message = fmt.Sprintf(message, args)
 	os.Stderr.Write([]byte(message))
 }
@@ -55,4 +56,9 @@ func PrintErrArgs(errMessage string, args ...string) {
 func Log(messages ...string) {
 	message := strings.Join(messages, " ")
 	fmt.Println(fmt.Sprintf("%s%s", PrefixLog, message))
+}
+
+func PrintWarn(messages ...string) {
+	message := strings.Join(messages, " ")
+	fmt.Println(fmt.Sprintf("%s%s%s", PrefixWarning, message, SuffixReset))
 }

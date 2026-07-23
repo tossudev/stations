@@ -2,13 +2,12 @@ package main
 
 import (
 	"fmt"
-	"slices"
 )
 
 func main() {
 	mapfile, start, end, trainCount, ok := ParseArgs()
 	if !ok {
-		Log("Program exited with errors.")
+		PrintWarn("Program exited with errors.")
 		return
 	}
 
@@ -16,7 +15,7 @@ func main() {
 
 	graphList, ok := ParseMap(string(contents))
 	if !ok {
-		Log("Program exited with errors.")
+		PrintWarn("Program exited with errors.")
 		return
 	}
 
@@ -28,29 +27,16 @@ func main() {
 		PrintErr(ErrEndStationNotExist)
 		return
 	}
-	/*
-	for name, station := range graphList.stations {
-		fmt.Println(name, station)
-	}
-	for name2, station2 := range graphList.adjacentList {
-		fmt.Println(name2, station2)
-	}
-	*/
-	fmt.Println(mapfile, start, end, trainCount)
-	//fmt.Println(graphList.adjMatrix)
-	nfrom := slices.Index(graphList.stationsNames, start)
-	nto := slices.Index(graphList.stationsNames, end)
-
-	mf, paths := MaxFlow(graphList, nfrom, nto)
+	
+	mf, paths := MaxFlow(graphList, start, end)
 	fmt.Println("Max flow:", mf)
+	fmt.Println("Trains:", trainCount)
 
 	for i, path := range paths {
-		fmt.Printf("Path #%d: ", i)
+		fmt.Printf("Path #%d: ", i + 1)
 		for _, station := range path {
 			fmt.Printf("%s ", graphList.stationsNames[station % len(graphList.stationsNames)])
 		}
 		fmt.Println()
 	}
-
-	//fmt.Println("Paths:", paths)
 }
