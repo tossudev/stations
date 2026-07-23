@@ -29,12 +29,12 @@ func main() {
 		return
 	}
 	/*
-	for name, station := range graphList.stations {
-		fmt.Println(name, station)
-	}
-	for name2, station2 := range graphList.adjacentList {
-		fmt.Println(name2, station2)
-	}
+		for name, station := range graphList.stations {
+			fmt.Println(name, station)
+		}
+		for name2, station2 := range graphList.adjacentList {
+			fmt.Println(name2, station2)
+		}
 	*/
 	fmt.Println(mapfile, start, end, trainCount)
 	//fmt.Println(graphList.adjMatrix)
@@ -47,10 +47,9 @@ func main() {
 	for i, path := range paths {
 		fmt.Printf("Path #%d: ", i)
 		for _, station := range path {
-			fmt.Printf("%s ", graphList.stationsNames[station % len(graphList.stationsNames)])
+			fmt.Printf("%s ", graphList.stationsNames[station%len(graphList.stationsNames)])
 		}
 		fmt.Println()
 	}
-
-	//fmt.Println("Paths:", paths)
+	PrintSchedule(graphList, paths, start, end, trainCount)
 }

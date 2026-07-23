@@ -1,0 +1,100 @@
+package main
+
+import (
+	"fmt"
+	"strings"
+)
+
+func PrintSchedule(g *GraphList, paths [][]int, source, sink string, numOfTrains int) {
+
+	type Train struct {
+		id       int
+		path     []int
+		position int
+	}
+
+	assignments := assignTrains(paths, numOfTrains)
+
+	var active []*Train
+	finished := 0
+	turn := 0
+
+	for finished < numOfTrains {
+		turn++
+		var output []string
+
+		var stillActive []*Train
+		for _, train := range active {
+			train.position++
+
+			if train.position < len(train.path) {
+				station := g.stationsNames[train.path[train.position]]
+				output = append(output, fmt.Sprintf("T%d-%s", train.id, station))
+				stillActive = append(stillActive, train)
+			} else {
+				finished++
+			}
+		}
+		active = stillActive
+
+		// send new trains, one per turn
+		for pathIdx, trainList := range assignments {
+			if len(trainList) == 0 {
+				continue
+			}
+
+			trainID := trainList[0]
+			assignments[pathIdx] = trainList[1:]
+
+			path := paths[pathIdx]
+			// start at first skipping source
+			if len(path) > 1 {
+				train := &Train{
+					id:       trainID,
+					path:     path,
+					position: 1,
+				}
+				station := g.stationsNames[path[1]]
+				output = append(output, fmt.Sprintf("T%d-%s", train.id, station))
+
+				active = append(active, train)
+
+			}
+		}
+		if len(output) > 0 {
+			fmt.Println(strings.Join(output, " "))
+		}
+	}
+}
+
+func assignTrains(paths [][]int, numTrains int) [][]int {
+	type PathInfo struct {
+		index int
+		load  int
+	}
+
+	infos := make([]PathInfo, len(paths))
+	for i := range paths {
+		infos[i] = PathInfo{
+			index: i,
+			load:  len(paths[i]), // initial cost is path length
+		}
+	}
+
+	assignments := make([][]int, len(paths))
+
+	for trainID := 1; trainID <= numTrains; trainID++ {
+		best := 0
+		for i := 1; i < len(infos); i++ {
+			if infos[i].load < infos[best].load {
+				best = i
+			}
+		}
+
+		pathIdx := infos[best].index
+		assignments[pathIdx] = append(assignments[pathIdx], trainID)
+
+		infos[best].load++ // path becomes busier
+	}
+	return assignments
+}
