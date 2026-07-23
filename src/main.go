@@ -36,21 +36,20 @@ func main() {
 		fmt.Println(name2, station2)
 	}
 	*/
-	//fmt.Println(mapfile, start, end, trainCount)
+	fmt.Println(mapfile, start, end, trainCount)
 	//fmt.Println(graphList.adjMatrix)
 	nfrom := slices.Index(graphList.stationsNames, start)
 	nto := slices.Index(graphList.stationsNames, end)
 
 	mf, paths := MaxFlow(graphList, nfrom, nto)
 	fmt.Println("Max flow:", mf)
-	fmt.Println("Trains:", trainCount)
 
-	for i, path := range paths {
-		fmt.Printf("Path #%d: ", i+1)
+	for _, path := range paths {
+		fmt.Println(path)
 		for _, station := range path {
-			fmt.Printf("%s ", graphList.stationsNames[station % len(graphList.stationsNames)])
+			fmt.Println(graphList.stationsNames[station])
 		}
-		fmt.Println()
 	}
 
+	//fmt.Println("Paths:", paths)
 }

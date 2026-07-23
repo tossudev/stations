@@ -7,12 +7,13 @@ import (
 )
 
 const (
-	PrefixError	string = `[ERROR] `
-	PrefixLog	string = `[LOG]   `
+	PrefixError	string = "\u001B[31m[ERROR] "
+	SuffixError string = "\033[0m"
+	PrefixLog	string = "[LOG]   "
 )
 
 var (
-	Usage						string = "go run . [path to file containing network map] [start station] [end station] [number of trains]"
+	Usage						string = "Usage: go run . [path to file containing network map] [start station] [end station] [number of trains]"
 	ErrArgsCount 				string = "Incorrect number of command line arguments"
 	ErrStartStationNotExist 	string = "Start station does not exist"
 	ErrEndStationNotExist		string = "End station does not exist"
@@ -35,7 +36,7 @@ var (
 
 func PrintErr(messages ...string) {
 	message := strings.Join(messages, " ")
-	message = fmt.Sprintf("%s%s\n", PrefixError, message)
+	message = fmt.Sprintf("%s%s%s\n", PrefixError, message, SuffixError)
 	os.Stderr.Write([]byte(message))
 }
 
@@ -46,7 +47,7 @@ func PrintErr(messages ...string) {
 // Will print out:
 // [ERROR] Duplicate station names: [hakaniemi kalasatama]
 func PrintErrArgs(errMessage string, args ...string) {
-	message := fmt.Sprintf("%s%s\n", PrefixError, errMessage)
+	message := fmt.Sprintf("%s%s%s\n", PrefixError, errMessage, SuffixError)
 	message = fmt.Sprintf(message, args)
 	os.Stderr.Write([]byte(message))
 }
