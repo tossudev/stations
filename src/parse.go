@@ -85,7 +85,7 @@ func parseStation(input string) (Station, error) {
 	var stationValues []string = strings.Split(input, ",")
 	if len(stationValues) != 3 {
 		PrintErrArgs(ErrMalformedStation, input)
-		return Station{}, errors.New(fmt.Sprintf(ErrMalformedStation, input))
+		return Station{}, fmt.Errorf(ErrMalformedStation, input)
 	}
 
 	name := stationValues[0]
@@ -111,7 +111,7 @@ func parseConnection(input string) (string, string, error) {
 	var connectionValues []string = strings.Split(input, "-")
 	if len(connectionValues) != 2 {
 		PrintErr(ErrMalformedConnection, input)
-		return "", "", errors.New(fmt.Sprintf(ErrMalformedConnection, input))
+		return "", "", fmt.Errorf(ErrMalformedConnection, input)
 	}
 
 	return connectionValues[0], connectionValues[1], nil
