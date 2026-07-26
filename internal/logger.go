@@ -28,7 +28,7 @@ Optional arguments:
 	ErrNoPath                string = "No path between the start and end stations"
 	ErrDuplicateConnections  string = "Duplicate connections: %s"
 	ErrTrainsCount           string = "Number of trains is not a valid positive integer"
-	ErrInvalidCoordinates    string = "Coordinates are not valid positive integers"
+	ErrInvalidCoordinates    string = "Coordinates for station: %s are not valid positive integers"
 	ErrDuplicateCoordinates  string = "Two stations exist at the exact same coordinate location: %s"
 	ErrConnectionNotExist    string = "Connection does not exist: %s"
 	ErrDuplicateStations     string = "Duplicate station names: %s"

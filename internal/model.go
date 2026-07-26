@@ -15,7 +15,6 @@ type GraphList struct {
 	stations      map[string]*Station
 	coordinateMap map[string]string
 	stationsNames []string
-	adjMatrix     [][]int
 
 	// adjacency matrix represents connections
 	// it looks like this:
@@ -25,6 +24,7 @@ type GraphList struct {
 	// out	[out-in][out-out]
 	//
 	// naturally only in-out and out-in will be populated
+	adjMatrix     [][]int
 }
 
 
@@ -41,26 +41,28 @@ func (g *GraphList) AddStation(station *Station) bool {
 		PrintErrArgs(ErrDuplicateStations, station.Name)
 		return false
 	}
-	// check dublicate coordinates
-	coordKey := fmt.Sprintf("%d,%d", station.X, station.Y)
-	if existingName, exists := g.coordinateMap[coordKey]; exists {
-		PrintErrArgs(ErrDuplicateCoordinates, coordKey, "stations: ", existingName, station.Name)
+	
+	coords := fmt.Sprintf("%d,%d", station.X, station.Y)
+	if existingName, exists := g.coordinateMap[coords]; exists {
+		PrintErrArgs(ErrDuplicateCoordinates, coords, "stations: ", existingName, station.Name)
 		return false
 	}
-	// all checks pass
+
 	g.stations[station.Name] = station
-	g.coordinateMap[coordKey] = station.Name
+	g.coordinateMap[coords] = station.Name
 	g.stationsNames = append(g.stationsNames, station.Name)
 
 	return true
 }
 
 func (g *GraphList) AddConnection(from, to string) bool {
+	stationsCount := len(g.stationsNames)
+	
 	// create adjacency matrix if it does not exist
 	if len(g.adjMatrix) == 0 {
-		g.adjMatrix = make([][]int, len(g.stations)*2)
+		g.adjMatrix = make([][]int, stationsCount*2)
 		for i := range g.adjMatrix {
-			g.adjMatrix[i] = make([]int, len(g.stations)*2)
+			g.adjMatrix[i] = make([]int, stationsCount*2)
 		}
 	}
 
@@ -75,13 +77,12 @@ func (g *GraphList) AddConnection(from, to string) bool {
 
 	nfrom := slices.Index(g.stationsNames, from)
 	nto := slices.Index(g.stationsNames, to)
-	N := len(g.stationsNames)
 
 	nfrom_in := nfrom
-	nfrom_out := nfrom + N
+	nfrom_out := nfrom + stationsCount
 
 	nto_in := nto
-	nto_out := nto + N
+	nto_out := nto + stationsCount
 
 	if g.adjMatrix[nfrom_out][nto_in] == 1 {
 		PrintErrArgs(ErrDuplicateConnections, to, from)
