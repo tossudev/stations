@@ -2,4 +2,5 @@ stations-visual-godot/
 *.jpg
 *.svg
 *.swp
-map-to-dot.x86-64
+*.x86-64
+stations

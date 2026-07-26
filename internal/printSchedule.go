@@ -1,11 +1,24 @@
-package main
+package internal
 
 import (
 	"fmt"
 	"strings"
 )
 
-func PrintSchedule(g *GraphList, paths [][]int, source, sink string, numOfTrains int) {
+// TODO: take into account small number of trains
+// this approach is primitive in the sense that it uses only the maxflow paths
+// there are cases where it would be more efficient to find shorter paths
+// however, this is trivial for the project requirements
+func CreateSchedule(g *GraphList, paths [][]int, source, sink string, numOfTrains int, printResult bool) int {
+	for i, path := range paths {
+		output := fmt.Sprintf("Path #%d: ", i+1)
+
+		for _, station := range path {
+			output += fmt.Sprintf("%s -> ", graphList.stationsNames[station%len(graphList.stationsNames)])
+		}
+		output = output[:len(output)-3]
+		Log(output)
+	}	
 
 	type Train struct {
 		id       int
@@ -61,10 +74,12 @@ func PrintSchedule(g *GraphList, paths [][]int, source, sink string, numOfTrains
 
 			}
 		}
-		if len(output) > 0 {
+		if len(output) > 0 && printResult {
 			fmt.Println(strings.Join(output, " "))
 		}
 	}
+
+	return turn - 1
 }
 
 func assignTrains(paths [][]int, numTrains int) [][]int {

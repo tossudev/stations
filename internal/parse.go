@@ -1,19 +1,18 @@
-package main
+package internal
 
 import (
-	"errors"
-	"fmt"
 	"strconv"
+	"fmt"
 	"strings"
 )
 
 const (
-	maxStations int = 10_000
+	maxStations	int = 10_000
 )
 
 var graphList *GraphList
 
-func ParseMap(input string) (*GraphList, bool) {
+func ParseMap(input, start, end string) (*GraphList, bool) {
 	graphList = NewGraphlist()
 
 	var parseStations bool = false
@@ -36,6 +35,11 @@ func ParseMap(input string) (*GraphList, bool) {
 		}
 
 		line = strings.ReplaceAll(line, " ", "")
+		line = strings.ReplaceAll(line, "\r", "")
+		line = strings.ReplaceAll(line, "\t", "")
+		line = strings.ReplaceAll(line, "\n", "")
+		line = strings.ReplaceAll(line, "\v", "")
+
 		if len(line) == 0 {
 			continue
 		}
@@ -52,21 +56,21 @@ func ParseMap(input string) (*GraphList, bool) {
 		}
 
 		if parseStations {
-			station, err := parseStation(line)
-			if err != nil {
+			station, ok := parseStation(line)
+			if !ok {
 				return graphList, false
 			}
-			ok := graphList.AddStation(&station)
+			ok = graphList.AddStation(&station)
 			if !ok {
 				return graphList, false
 			}
 		}
 		if parseConnections {
-			begin, end, err := parseConnection(line)
-			if err != nil {
+			begin, end, ok := parseConnection(line)
+			if !ok {
 				return graphList, false
 			}
-			ok := graphList.AddConnection(begin, end)
+			ok = graphList.AddConnection(begin, end)
 			if !ok {
 				return graphList, false
 			}
@@ -78,41 +82,52 @@ func ParseMap(input string) (*GraphList, bool) {
 		return graphList, false
 	}
 
+	if _, exists := graphList.stations[start]; !exists {
+		PrintErr(ErrStartStationNotExist)
+		return graphList, false
+	}
+	if _, exists := graphList.stations[end]; !exists {
+		PrintErr(ErrEndStationNotExist)
+		return graphList, false
+	}
+
 	return graphList, true
 }
 
-func parseStation(input string) (Station, error) {
+func parseStation(input string) (Station, bool) {
 	var stationValues []string = strings.Split(input, ",")
 	if len(stationValues) != 3 {
 		PrintErrArgs(ErrMalformedStation, input)
-		return Station{}, fmt.Errorf(ErrMalformedStation, input)
+		return Station{}, false
 	}
 
 	name := stationValues[0]
 	x, err := strconv.Atoi(stationValues[1])
 	if err != nil || x < 0 {
-		PrintErr(ErrInvalidCoordinates)
-		return Station{}, errors.New(ErrInvalidCoordinates)
+		fmt.Println(err)
+		PrintErrArgs(ErrInvalidCoordinates, name)
+		return Station{}, false
 	}
 	y, err := strconv.Atoi(stationValues[2])
 	if err != nil || y < 0 {
-		PrintErr(ErrInvalidCoordinates)
-		return Station{}, errors.New(ErrInvalidCoordinates)
+		fmt.Println(err)
+		PrintErrArgs(ErrInvalidCoordinates, name)
+		return Station{}, false 
 	}
 
 	return Station{
 		Name: name,
 		X:    x,
 		Y:    y,
-	}, nil
+	}, true
 }
 
-func parseConnection(input string) (string, string, error) {
+func parseConnection(input string) (string, string, bool) {
 	var connectionValues []string = strings.Split(input, "-")
 	if len(connectionValues) != 2 {
 		PrintErr(ErrMalformedConnection, input)
-		return "", "", fmt.Errorf(ErrMalformedConnection, input)
+		return "", "", false
 	}
 
-	return connectionValues[0], connectionValues[1], nil
+	return connectionValues[0], connectionValues[1], true
 }

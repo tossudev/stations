@@ -2,6 +2,8 @@ package main
 
 import (
 	"testing"
+	
+	"stations/internal"
 )
 
 type Suite struct {
@@ -19,14 +21,24 @@ const (
 	TestDirectory	string = "../data/"
 )
 
-// TODO: Does not test for turns yet, only maxflow
 func testAny(suite Suite, t *testing.T) {
-	contents := ReadMapFile(TestDirectory + suite.File)
-	graphList, _ := ParseMap(string(contents))
-	maxflow, _ := MaxFlow(graphList, suite.Start, suite.End)
+	contents := internal.ReadMapFile(TestDirectory + suite.File)
+	graphList, ok := internal.ParseMap(string(contents), suite.Start, suite.End)
+	if !ok {
+		t.Errorf("Failed to parse map file: %s", suite.File)
+		return
+	}
+
+	maxflow, paths := internal.MaxFlow(graphList, suite.Start, suite.End)
 
 	if maxflow != suite.Maxflow {
 		t.Errorf(`Test failed: %s. Maxflow should be %d, is %d.`, suite.File, suite.Maxflow, maxflow)
+		return
+	}
+
+	turns := internal.CreateSchedule(graphList, paths, suite.Start, suite.End, suite.Trains, false)
+	if turns > suite.Turns {
+		t.Errorf(`Test failed: %s. Should take %d turns, takes %d.`, suite.File, suite.Turns, turns)
 	}
 }
 
