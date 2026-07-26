@@ -15,7 +15,7 @@ func ParseArgs() (mapfile, start, end string, trainCount int, ok bool) {
 
 	if slices.Contains(os.Args, "-h") || slices.Contains(os.Args, "--help") {
 		PrintUsage()
-		return
+		os.Exit(0)
 	}
 
 	if len(os.Args) < 5 {

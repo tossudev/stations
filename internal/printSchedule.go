@@ -10,6 +10,16 @@ import (
 // there are cases where it would be more efficient to find shorter paths
 // however, this is trivial for the project requirements
 func CreateSchedule(g *GraphList, paths [][]int, source, sink string, numOfTrains int, printResult bool) int {
+	for i, path := range paths {
+		output := fmt.Sprintf("Path #%d: ", i+1)
+
+		for _, station := range path {
+			output += fmt.Sprintf("%s -> ", graphList.stationsNames[station%len(graphList.stationsNames)])
+		}
+		output = output[:len(output)-3]
+		Log(output)
+	}	
+
 	type Train struct {
 		id       int
 		path     []int

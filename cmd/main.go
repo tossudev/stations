@@ -22,6 +22,8 @@ func main() {
 
 	_, paths := internal.MaxFlow(graphList, start, end)
 	internal.CreateSchedule(graphList, paths, start, end, trainCount, true)
+
+	internal.Log("Program exited successfully")
 }
 
 

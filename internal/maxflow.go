@@ -35,7 +35,6 @@ func MaxFlow(g *GraphList, start, end string) (int, [][]int) {
 	// TODO: ...why?
 	parent := make([]int, matrixSize)
 	maxFlow := 0
-	var paths [][]int
 
 	// While there exists an augmenting path from source to sink
 	for g.bfs(source, sink, parent, residual, matrixSize) {
@@ -49,15 +48,6 @@ func MaxFlow(g *GraphList, start, end string) (int, [][]int) {
 			}
 		}
 
-		path := []int{}
-		for v := sink; v != source; v = parent[v] {
-			path = append(path, v)
-		}
-
-		path = append(path, source)
-		reverse(path)
-		paths = append(paths, path)
-
 		// Update residual capacities
 		for v := sink; v != source; v = parent[v] {
 			u := parent[v]
@@ -67,10 +57,10 @@ func MaxFlow(g *GraphList, start, end string) (int, [][]int) {
 		maxFlow += pathFlow
 	}
 
-	newPaths := findPathsFromResidual(residual, g.adjMatrix, source, sink, matrixSize/2)
+	paths := findPathsFromResidual(residual, g.adjMatrix, source, sink, matrixSize/2)
 
 	Log("Max flow:", strconv.Itoa(maxFlow))
-	return maxFlow, newPaths
+	return maxFlow, paths
 }
 
 
