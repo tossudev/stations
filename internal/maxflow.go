@@ -64,7 +64,13 @@ func findPathsFromResidual(residual [][]int, adjMatrix [][]int, source, sink, n 
 
 		for current != sink {
 			next_node := -1
+
 			for v := range n * 2 {
+				// either the edge is between the split node or two different nodes, eg:
+				// waterloo(in)->waterloo(out) || waterloo(out)->euston(in)
+
+				// if the edge exists and the residual has been set to 0, we know that that edge can be traversed
+
 				if current < n && v == current + n && residual[current][v] == 0 || current >= n && v < n && adjMatrix[current][v] == 1 && residual[current][v] == 0 {
 					next_node = v
 					break
@@ -75,6 +81,7 @@ func findPathsFromResidual(residual [][]int, adjMatrix [][]int, source, sink, n 
 				break
 			}
 			
+			// mark edge as used so we don't use it again
 			residual[current][next_node] = 1
 
 			current = next_node
@@ -98,17 +105,16 @@ func findPathsFromResidual(residual [][]int, adjMatrix [][]int, source, sink, n 
 }
 
 
-// bfs performs breadth-first search to find a path from source to sink
+// breadth-first search to find a path from source to sink
 // Returns true if a path exists, and fills the parent array with the path
+// otherwise completely standard BFS but checks for residual capacity as well
 func (g *GraphList) bfs(source, sink int, parent []int, residual [][]int, matrixSize int) bool {
 	visited := make([]bool, matrixSize)
 
-	// Create queue and add source
 	queue := []int{source}
 	visited[source] = true
 	parent[source] = -1
 
-	// Standard BFS
 	for len(queue) > 0 {
 		u := queue[0]
 		queue = queue[1:]
@@ -122,7 +128,6 @@ func (g *GraphList) bfs(source, sink int, parent []int, residual [][]int, matrix
 				parent[v] = u
 				visited[v] = true
 
-				// Early exit if we reached the sink
 				if v == sink {
 					return true
 				}
