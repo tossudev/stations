@@ -8,12 +8,12 @@ import (
 )
 
 const (
-	maxStations int = 10_000
+	maxStations	int = 10_000
 )
 
 var graphList *GraphList
 
-func ParseMap(input string) (*GraphList, bool) {
+func ParseMap(input, start, end string) (*GraphList, bool) {
 	graphList = NewGraphlist()
 
 	var parseStations bool = false
@@ -75,6 +75,15 @@ func ParseMap(input string) (*GraphList, bool) {
 
 	if len(graphList.stations) > maxStations {
 		PrintErr(ErrTooManyStations)
+		return graphList, false
+	}
+
+	if _, exists := graphList.stations[start]; !exists {
+		PrintErr(ErrStartStationNotExist)
+		return graphList, false
+	}
+	if _, exists := graphList.stations[end]; !exists {
+		PrintErr(ErrEndStationNotExist)
 		return graphList, false
 	}
 

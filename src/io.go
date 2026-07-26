@@ -3,16 +3,40 @@ package main
 import (
 	"os"
 	"strconv"
+	"slices"
 )
 
+const (
+	maxTrains	int = 100_000
+)
 
 func ParseArgs() (mapfile, start, end string, trainCount int, ok bool) {
 	ok = false
 
-	if len(os.Args) != 5 {
-		PrintErr(ErrArgsCount)
-		Log(Usage)
+	if slices.Contains(os.Args, "-h") || slices.Contains(os.Args, "--help") {
+		PrintUsage()
 		return
+	}
+
+	if len(os.Args) < 5 {
+		PrintErr(ErrArgsCount)
+		PrintUsage()
+		return
+	}
+
+	// find verbose flag and remove it to work with indices in order
+	// maybe using the flag package would be cleaner, this works fine
+	if len(os.Args) == 6 {
+		if slices.Contains(os.Args, "-v") || slices.Contains(os.Args, "--verbose") {
+			Verbose = true
+			
+			i := slices.Index(os.Args, "-v")
+			if i == -1 {
+				i = slices.Index(os.Args, "--verbose")
+			}
+			
+			os.Args = append(os.Args[:i], os.Args[i+1:]...)
+		}
 	}
 
 	mapfile = os.Args[1]
@@ -26,6 +50,11 @@ func ParseArgs() (mapfile, start, end string, trainCount int, ok bool) {
 	trainCount, err = strconv.Atoi(trainCountStr)
 	if err != nil || trainCount < 1 {
 		PrintErr(ErrTrainsCount)
+		return
+	}
+
+	if trainCount > maxTrains {
+		PrintErr(ErrTooManyTrains)
 		return
 	}
 

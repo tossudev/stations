@@ -3,6 +3,7 @@ package main
 import (
 	"math"
 	"slices"
+	"strconv"
 )
 
 // Edmonds-Karp
@@ -68,6 +69,7 @@ func MaxFlow(g *GraphList, start, end string) (int, [][]int) {
 
 	newPaths := findPathsFromResidual(residual, g.adjMatrix, source, sink, matrixSize/2)
 
+	Log("Max flow:", strconv.Itoa(maxFlow))
 	return maxFlow, newPaths
 }
 

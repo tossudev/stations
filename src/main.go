@@ -1,43 +1,27 @@
 package main
 
-import (
-	"fmt"
-)
+import "os"
+
 
 func main() {
 	mapfile, start, end, trainCount, ok := ParseArgs()
 	if !ok {
-		PrintWarn("Program exited with errors.")
-		return
+		ExitWithErrors()
 	}
 
 	contents := ReadMapFile(mapfile)
 
-	graphList, ok := ParseMap(string(contents))
+	graphList, ok := ParseMap(string(contents), start, end)
 	if !ok {
-		PrintWarn("Program exited with errors.")
-		return
+		ExitWithErrors()
 	}
 
-	if _, exists := graphList.stations[start]; !exists {
-		PrintErr(ErrStartStationNotExist)
-		return
-	}
-	if _, exists := graphList.stations[end]; !exists {
-		PrintErr(ErrEndStationNotExist)
-		return
-	}
+	_, paths := MaxFlow(graphList, start, end)
+	CreateSchedule(graphList, paths, start, end, trainCount, true)
+}
 
-	mf, paths := MaxFlow(graphList, start, end)
-	fmt.Println("Max flow:", mf)
-	fmt.Println("Trains:", trainCount)
 
-	for i, path := range paths {
-		fmt.Printf("Path #%d: ", i+1)
-		for _, station := range path {
-			fmt.Printf("%s ", graphList.stationsNames[station%len(graphList.stationsNames)])
-		}
-		fmt.Println()
-	}
-	PrintSchedule(graphList, paths, start, end, trainCount)
+func ExitWithErrors() {
+	PrintWarn("Program exited with errors")
+	os.Exit(0)
 }

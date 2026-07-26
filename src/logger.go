@@ -7,14 +7,20 @@ import (
 )
 
 const (
-	PrefixError   string = "\u001B[31m[ERROR] "
-	PrefixWarning string = "\u001B[33m[WARN]  "
+	PrefixError   string = "\u001B[31m[ERROR]\t"
+	PrefixWarning string = "\u001B[33m[WARN]\t"
 	SuffixReset   string = "\033[0m"
-	PrefixLog     string = "[LOG]   "
-)
+	PrefixLog     string = "\u001B[32m[LOG]\t"
 
-var (
-	Usage                    string = "Usage: go run . [path to file containing network map] [start station] [end station] [number of trains]"
+	Usage                    string = `
+Usage: ./stations [MAP FILE] [START] [END] [TRAINS AMOUNT] [optional args...]
+
+Optional arguments:
+	-v, --verbose
+		Verbose output
+
+	-h, --help
+		Show this help message`
 	ErrArgsCount             string = "Incorrect number of command line arguments"
 	ErrStartStationNotExist  string = "Start station does not exist"
 	ErrEndStationNotExist    string = "End station does not exist"
@@ -29,10 +35,15 @@ var (
 	ErrInvalidStationNameArg string = "Invalid station name in argument"
 	ErrNoStations            string = "Map does not contain stations section"
 	ErrNoConnections         string = "Map does not contain connections section"
-	ErrTooManyStations       string = "Map has over 10 000 stations"
+	ErrTooManyStations       string = "Station limit is 10,000"
+	ErrTooManyTrains       	 string = "Train limit is 100,000"
 	ErrMalformedStation      string = "Malformed station data: %s"
 	ErrMalformedConnection   string = "Malformed connection data: %s"
 	ErrStationNotExist       string = "Station does not exist: %s"
+)
+
+var (
+	Verbose	bool = false
 )
 
 func PrintErr(messages ...string) {
@@ -54,8 +65,15 @@ func PrintErrArgs(errMessage string, args ...string) {
 }
 
 func Log(messages ...string) {
-	message := strings.Join(messages, " ")
-	fmt.Printf("%s%s\n", PrefixLog, message)
+	if Verbose {
+		message := strings.Join(messages, " ")
+		fmt.Printf("%s%s%s\n", PrefixLog, message, SuffixReset)
+	}
+}
+
+func PrintUsage() {
+	fmt.Println(Usage)
+	fmt.Println()
 }
 
 func PrintWarn(messages ...string) {
