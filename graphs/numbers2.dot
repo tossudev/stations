@@ -1,0 +1,21 @@
+graph stations 
+{rankdir=LR;
+
+node [shape=ellipse, fixedsize=false];
+
+"one";
+"two";
+"three";
+"four";
+"five";
+"six";
+
+"two" -- "three";
+"five" -- "one";
+"three" -- "one";
+"two" -- "five";
+"one" -- "four";
+"six" -- "two";
+"one" -- "six";
+
+}
