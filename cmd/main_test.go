@@ -2,6 +2,8 @@ package main
 
 import (
 	"testing"
+	
+	"stations/internal"
 )
 
 type Suite struct {
@@ -21,15 +23,15 @@ const (
 
 // TODO: Does not test for turns yet, only maxflow
 func testAny(suite Suite, t *testing.T) {
-	contents := ReadMapFile(TestDirectory + suite.File)
-	graphList, _ := ParseMap(string(contents), suite.Start, suite.End)
-	maxflow, paths := MaxFlow(graphList, suite.Start, suite.End)
+	contents := internal.ReadMapFile(TestDirectory + suite.File)
+	graphList, _ := internal.ParseMap(string(contents), suite.Start, suite.End)
+	maxflow, paths := internal.MaxFlow(graphList, suite.Start, suite.End)
 
 	if maxflow != suite.Maxflow {
 		t.Errorf(`Test failed: %s. Maxflow should be %d, is %d.`, suite.File, suite.Maxflow, maxflow)
 	}
 
-	turns := CreateSchedule(graphList, paths, suite.Start, suite.End, suite.Trains, false)
+	turns := internal.CreateSchedule(graphList, paths, suite.Start, suite.End, suite.Trains, false)
 	if turns > suite.Turns {
 		t.Errorf(`Test failed: %s. Should take %d turns, takes %d.`, suite.File, suite.Turns, turns)
 	}

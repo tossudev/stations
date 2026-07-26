@@ -1,0 +1,11 @@
+go thru all TODOs
+
+few trains take shorter path?
+
+restructure codebase
+README
+push to gitea
+
+...go thru all TODOs
+try my best to understand the algorithm
+
