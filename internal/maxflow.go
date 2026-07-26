@@ -5,7 +5,6 @@ package internal
 import (
 	"slices"
 	"strconv"
-	"fmt"
 )
 
 // Edmonds-Karp
@@ -39,7 +38,6 @@ func MaxFlow(g *GraphList, start, end string) (int, [][]int) {
 
 	// While there exists an augmenting path from source to sink
 	for g.bfs(source, sink, parent, residual, matrixSize) {
-		fmt.Println("Parent:", parent)
 		// Update residual capacities
 		for v := sink; v != source; v = parent[v] {
 			u := parent[v]
