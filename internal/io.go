@@ -39,6 +39,12 @@ func ParseArgs() (mapfile, start, end string, trainCount int, ok bool) {
 		}
 	}
 
+	if len(os.Args) > 5 {
+		PrintErr(ErrArgsCount)
+		PrintUsage()
+		return
+	}
+
 	mapfile = os.Args[1]
 	start = os.Args[2]
 	end = os.Args[3]
