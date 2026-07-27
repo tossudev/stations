@@ -10,10 +10,9 @@ const (
 	maxStations	int = 10_000
 )
 
-var graphList *GraphList
 
 func ParseMap(input, start, end string) (*GraphList, bool) {
-	graphList = NewGraphlist()
+	graphList := NewGraphlist()
 
 	var parseStations bool = false
 	var parseConnections bool = false

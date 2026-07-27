@@ -8,8 +8,7 @@ import (
 )
 
 // Edmonds-Karp
-func MaxFlow(g *GraphList, start, end string) (int, [][]int) {
-
+func MaxFlow(graphList *GraphList, start, end string) (int, [][]int) {
 	// start from source(out)
 	// NOTE: sink is assigned to sink(in) by default
 
@@ -21,7 +20,7 @@ func MaxFlow(g *GraphList, start, end string) (int, [][]int) {
 	//
 	// naturally only in-out and out-in will be populated
 
-	var matrixSize int = len(g.stationsNames)*2
+	var matrixSize int = len(graphList.stationsNames)*2
 	var source int = slices.Index(graphList.stationsNames, start) + matrixSize/2
 	var sink int = slices.Index(graphList.stationsNames, end)
 
@@ -29,7 +28,7 @@ func MaxFlow(g *GraphList, start, end string) (int, [][]int) {
 	residual := make([][]int, matrixSize)
 	for i := range residual {
 		residual[i] = make([]int, matrixSize)
-		copy(residual[i], g.adjMatrix[i])
+		copy(residual[i], graphList.adjMatrix[i])
 	}
 
 	// parent saves bfs path source->sink
@@ -37,7 +36,7 @@ func MaxFlow(g *GraphList, start, end string) (int, [][]int) {
 	maxFlow := 0
 
 	// While there exists an augmenting path from source to sink
-	for g.bfs(source, sink, parent, residual, matrixSize) {
+	for graphList.bfs(source, sink, parent, residual, matrixSize) {
 		// Update residual capacities
 		for v := sink; v != source; v = parent[v] {
 			u := parent[v]
@@ -47,7 +46,7 @@ func MaxFlow(g *GraphList, start, end string) (int, [][]int) {
 		maxFlow += 1
 	}
 
-	paths := findPathsFromResidual(residual, g.adjMatrix, source, sink, matrixSize/2)
+	paths := findPathsFromResidual(residual, graphList.adjMatrix, source, sink, matrixSize/2)
 
 	Log("Max flow:", strconv.Itoa(maxFlow))
 	return maxFlow, paths

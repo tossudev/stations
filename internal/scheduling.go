@@ -9,7 +9,7 @@ import (
 // this approach is primitive in the sense that it uses only the maxflow paths
 // there are cases where it would be more efficient to find shorter paths
 // however, this is trivial for the project requirements
-func CreateSchedule(g *GraphList, paths [][]int, source, sink string, numOfTrains int, printResult bool) int {
+func CreateSchedule(graphList *GraphList, paths [][]int, source, sink string, numOfTrains int, printResult bool) int {
 	for i, path := range paths {
 		output := fmt.Sprintf("Path #%d: ", i+1)
 
@@ -41,7 +41,7 @@ func CreateSchedule(g *GraphList, paths [][]int, source, sink string, numOfTrain
 			train.position++
 
 			if train.position < len(train.path) {
-				station := g.stationsNames[train.path[train.position]]
+				station := graphList.stationsNames[train.path[train.position]]
 				output = append(output, fmt.Sprintf("T%d-%s", train.id, station))
 				stillActive = append(stillActive, train)
 			} else {
@@ -67,7 +67,7 @@ func CreateSchedule(g *GraphList, paths [][]int, source, sink string, numOfTrain
 					path:     path,
 					position: 1,
 				}
-				station := g.stationsNames[path[1]]
+				station := graphList.stationsNames[path[1]]
 				output = append(output, fmt.Sprintf("T%d-%s", train.id, station))
 
 				active = append(active, train)
