@@ -2,8 +2,8 @@ package internal
 
 import (
 	"strconv"
-	"fmt"
 	"strings"
+	"unicode"
 )
 
 const (
@@ -101,15 +101,18 @@ func parseStation(input string) (Station, bool) {
 	}
 
 	name := stationValues[0]
+	if !isValidName(name) {
+		PrintErrArgs(ErrMalformedStationName, input)
+		return Station{}, false
+	}
+
 	x, err := strconv.Atoi(stationValues[1])
 	if err != nil || x < 0 {
-		fmt.Println(err)
 		PrintErrArgs(ErrInvalidCoordinates, name)
 		return Station{}, false
 	}
 	y, err := strconv.Atoi(stationValues[2])
 	if err != nil || y < 0 {
-		fmt.Println(err)
 		PrintErrArgs(ErrInvalidCoordinates, name)
 		return Station{}, false 
 	}
@@ -129,4 +132,15 @@ func parseConnection(input string) (string, string, bool) {
 	}
 
 	return connectionValues[0], connectionValues[1], true
+}
+
+
+func isValidName(name string) bool {
+	for _, letter := range name {
+		if !unicode.IsLower(letter) && !unicode.IsNumber(letter) && letter != '_' {
+			return false
+		}
+	}
+
+	return true
 }
