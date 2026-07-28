@@ -11,7 +11,10 @@ import (
 )
 
 func main() {
-	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
+	timeCtx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
+	defer cancel()
+
+	ctx, stop := signal.NotifyContext(timeCtx, os.Interrupt, syscall.SIGINT, syscall.SIGTERM)
 	defer stop()
 
 	var wg sync.WaitGroup
@@ -44,6 +47,10 @@ func main() {
 	case <-done:
 		internal.Log("Program exited successfully")
 	case <-ctx.Done():
+		if ctx.Err() == context.DeadlineExceeded {
+			internal.PrintWarn("Program timeout exceeded, program exited forcefully")
+			os.Exit(1)
+		}
 		internal.Log("Shutdown initiated")
 		shutdownCtx, shutdownCancel := context.WithTimeout(context.Background(), 5*time.Second)
 		defer shutdownCancel()
@@ -52,7 +59,7 @@ func main() {
 		case <-done:
 			internal.Log("Program exited successfully")
 		case <-shutdownCtx.Done():
-			internal.Log("Shutdown timeout exceeded, forcing exit")
+			internal.PrintWarn("Shutdown timeout exceeded, program exited forcefully")
 			os.Exit(1)
 		}
 	}
