@@ -37,7 +37,8 @@ Optional arguments:
 	ErrNoConnections         string = "Map does not contain connections section"
 	ErrTooManyStations       string = "Station limit is 10,000"
 	ErrTooManyTrains       	 string = "Train limit is 100,000"
-	ErrMalformedStation      string = "Malformed station data: %s"
+	ErrMalformedStation      string = "Station has too many values: %s"
+	ErrMalformedStationName  string = "Malformed station name: %s"
 	ErrMalformedConnection   string = "Malformed connection data: %s"
 	ErrStationNotExist       string = "Station does not exist: %s"
 )
